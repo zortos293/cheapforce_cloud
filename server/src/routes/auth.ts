@@ -24,8 +24,8 @@ authRouter.post('/link', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid or expired code' });
     }
 
-    // Get or create user
-    const user = discordAuth.getOrCreateUser(result.discordId, 'discord_user');
+    // Get or create user with Discord info
+    const user = discordAuth.getOrCreateUser(result.discordId, result.discordUsername, result.discordAvatar);
 
     // Create session
     const sessionId = crypto.randomBytes(32).toString('hex');

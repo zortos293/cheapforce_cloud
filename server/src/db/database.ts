@@ -30,6 +30,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS auth_codes (
     code TEXT PRIMARY KEY,
     discord_id TEXT NOT NULL,
+    discord_username TEXT,
+    discord_avatar TEXT,
     created_at INTEGER NOT NULL,
     expires_at INTEGER NOT NULL,
     used INTEGER DEFAULT 0
@@ -58,14 +60,28 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_sync_requests_user ON sync_requests(user_id, processed);
 `);
 
-// Migration: Add discord_avatar column if it doesn't exist
-try {
+// Migration: Add discord_avatar column to users table if it doesn't exist
+const usersTableInfo = db.prepare('PRAGMA table_info(users)').all() as any[];
+const hasAvatarColumn = usersTableInfo.some((col: any) => col.name === 'discord_avatar');
+
+if (!hasAvatarColumn) {
   db.exec(`ALTER TABLE users ADD COLUMN discord_avatar TEXT`);
-} catch (error: any) {
-  // Column already exists, ignore error
-  if (!error.message.includes('duplicate column name')) {
-    console.error('Migration error:', error);
-  }
+  console.log('✅ Migration: Added discord_avatar column to users table');
+}
+
+// Migration: Add discord_username and discord_avatar columns to auth_codes table if they don't exist
+const authCodesTableInfo = db.prepare('PRAGMA table_info(auth_codes)').all() as any[];
+const hasUsernameInAuthCodes = authCodesTableInfo.some((col: any) => col.name === 'discord_username');
+const hasAvatarInAuthCodes = authCodesTableInfo.some((col: any) => col.name === 'discord_avatar');
+
+if (!hasUsernameInAuthCodes) {
+  db.exec(`ALTER TABLE auth_codes ADD COLUMN discord_username TEXT`);
+  console.log('✅ Migration: Added discord_username column to auth_codes table');
+}
+
+if (!hasAvatarInAuthCodes) {
+  db.exec(`ALTER TABLE auth_codes ADD COLUMN discord_avatar TEXT`);
+  console.log('✅ Migration: Added discord_avatar column to auth_codes table');
 }
 
 export type UserPlan = 'free' | 'plus' | 'premium';
@@ -102,6 +118,8 @@ export const PLAN_LIMITS = {
 export interface AuthCode {
   code: string;
   discord_id: string;
+  discord_username: string | null;
+  discord_avatar: string | null;
   created_at: number;
   expires_at: number;
   used: number;
@@ -125,8 +143,8 @@ export interface SyncRequest {
 // User operations
 export const userOps = {
   create: db.prepare(`
-    INSERT INTO users (discord_id, discord_username, created_at)
-    VALUES (?, ?, ?)
+    INSERT INTO users (discord_id, discord_username, discord_avatar, created_at)
+    VALUES (?, ?, ?, ?)
     RETURNING *
   `),
 
@@ -150,6 +168,10 @@ export const userOps = {
     UPDATE users SET plan = ? WHERE id = ?
   `),
 
+  updateDiscordInfo: db.prepare(`
+    UPDATE users SET discord_username = ?, discord_avatar = ? WHERE id = ?
+  `),
+
   getAllUsers: db.prepare(`
     SELECT * FROM users
   `)
@@ -158,8 +180,8 @@ export const userOps = {
 // Auth code operations
 export const authCodeOps = {
   create: db.prepare(`
-    INSERT INTO auth_codes (code, discord_id, created_at, expires_at)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO auth_codes (code, discord_id, discord_username, discord_avatar, created_at, expires_at)
+    VALUES (?, ?, ?, ?, ?, ?)
   `),
 
   findByCode: db.prepare(`
