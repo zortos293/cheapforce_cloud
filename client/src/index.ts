@@ -159,13 +159,10 @@ Supported by auto-sync when running the client.`;
    * Handle file changes from watcher
    */
   private async handleFilesChanged(gameId: string, files: string[]): Promise<void> {
-    const game = this.gamesConfig.games.find(g => g.id === gameId);
-    if (!game) return;
+    const watchedGame = this.watchedGames.get(gameId);
+    if (!watchedGame) return;
 
-    const basePath = this.getGamePath(game);
-    if (!basePath) return;
-
-    await this.sync.uploadGameFiles(gameId, files, basePath);
+    await this.sync.uploadGameFiles(gameId, files, watchedGame.basePath);
   }
 
   /**

@@ -24,8 +24,8 @@ authRouter.post('/link', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid or expired code' });
     }
 
-    // Get or create user
-    const user = discordAuth.getOrCreateUser(result.discordId, 'discord_user');
+    // Get or create user with Discord info
+    const user = discordAuth.getOrCreateUser(result.discordId, result.discordUsername, result.discordAvatar);
 
     // Create session
     const sessionId = crypto.randomBytes(32).toString('hex');
@@ -38,7 +38,9 @@ authRouter.post('/link', async (req: Request, res: Response) => {
       sessionId,
       user: {
         id: user.id,
-        username: user.discord_username
+        username: user.discord_username,
+        avatar: user.discord_avatar || null,
+        plan: user.plan
       }
     });
   } catch (error) {
@@ -74,7 +76,9 @@ authRouter.get('/verify', async (req: Request, res: Response) => {
       valid: true,
       user: {
         id: user.id,
-        username: user.discord_username
+        username: user.discord_username,
+        avatar: user.discord_avatar || null,
+        plan: user.plan
       }
     });
   } catch (error) {

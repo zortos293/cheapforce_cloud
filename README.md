@@ -170,7 +170,7 @@ Control your backups remotely from Discord:
 
 The client checks for Discord commands every 10 seconds when running in auto-sync mode.
 
-See [PLANS.md](PLANS.md) for detailed plan information.
+See [PLANS.md](docs/PLANS.md) for detailed plan information.
 
 ### Restore Saves
 

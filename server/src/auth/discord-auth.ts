@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, TextChannel, EmbedBuilder, AttachmentBuilder } from 'discord.js';
-import { authCodeOps, userOps, User } from '../db/database';
+import { authCodeOps, userOps, User, AuthCode } from '../db/database';
 import { calculateUserStorage, getStorageInfo, formatBytes, generateProgressBar, canUseFeature } from '../utils/storage-utils';
 import { R2Storage } from '../storage/r2-storage';
 import crypto from 'crypto';
@@ -47,12 +47,12 @@ export class DiscordAuth {
   /**
    * Generate a 6-digit linking code for a Discord user
    */
-  generateLinkingCode(discordId: string): string {
+  generateLinkingCode(discordId: string, discordUsername: string, discordAvatar: string | null): string {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const now = Date.now();
     const expiresAt = now + (15 * 60 * 1000); // 15 minutes
 
-    authCodeOps.create.run(code, discordId, now, expiresAt);
+    authCodeOps.create.run(code, discordId, discordUsername, discordAvatar, now, expiresAt);
 
     return code;
   }
@@ -60,26 +60,30 @@ export class DiscordAuth {
   /**
    * Verify a linking code and return the associated Discord user
    */
-  verifyLinkingCode(code: string): { discordId: string } | null {
-    const authCode = authCodeOps.findByCode.get(code, Date.now()) as any;
+  verifyLinkingCode(code: string): { discordId: string; discordUsername: string; discordAvatar: string | null } | null {
+    const authCode = authCodeOps.findByCode.get(code, Date.now()) as AuthCode | undefined;
 
     if (!authCode) {
       return null;
     }
 
     authCodeOps.markUsed.run(code);
-    return { discordId: authCode.discord_id };
+    return {
+      discordId: authCode.discord_id,
+      discordUsername: authCode.discord_username || 'Discord User',
+      discordAvatar: authCode.discord_avatar
+    };
   }
 
   /**
    * Send linking code to Discord channel
    */
-  async sendLinkingCode(discordId: string, discordUsername: string): Promise<string> {
+  async sendLinkingCode(discordId: string, discordUsername: string, discordAvatar: string | null): Promise<string> {
     if (!this.ready) {
       throw new Error('Discord bot not ready');
     }
 
-    const code = this.generateLinkingCode(discordId);
+    const code = this.generateLinkingCode(discordId, discordUsername, discordAvatar);
 
     try {
       const channel = await this.client.channels.fetch(this.channelId) as TextChannel;
@@ -113,9 +117,13 @@ export class DiscordAuth {
   private async handleLinkCommand(interaction: any) {
     const discordId = interaction.user.id;
     const discordUsername = interaction.user.username;
+    // Construct full Discord CDN URL from avatar hash
+    const discordAvatar = interaction.user.avatar
+      ? `https://cdn.discordapp.com/avatars/${discordId}/${interaction.user.avatar}.png`
+      : null;
 
     try {
-      const code = await this.sendLinkingCode(discordId, discordUsername);
+      const code = await this.sendLinkingCode(discordId, discordUsername, discordAvatar);
 
       await interaction.reply({
         content: `Your linking code has been sent! Check the channel for your code.`,
@@ -130,13 +138,20 @@ export class DiscordAuth {
   }
 
   /**
-   * Get or create user from Discord ID
+   * Get or create user from Discord ID, and update info if changed
    */
-  getOrCreateUser(discordId: string, discordUsername: string): User {
+  getOrCreateUser(discordId: string, discordUsername: string, discordAvatar: string | null): User {
     let user = userOps.findByDiscordId.get(discordId) as User | undefined;
 
     if (!user) {
-      user = userOps.create.get(discordId, discordUsername, Date.now()) as User;
+      // Create new user
+      user = userOps.create.get(discordId, discordUsername, discordAvatar, Date.now()) as User;
+    } else {
+      // Update username and avatar if they changed
+      if (user.discord_username !== discordUsername || user.discord_avatar !== discordAvatar) {
+        userOps.updateDiscordInfo.run(discordUsername, discordAvatar, user.id);
+        user = userOps.findById.get(user.id) as User;
+      }
     }
 
     return user;

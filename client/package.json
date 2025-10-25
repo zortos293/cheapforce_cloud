@@ -24,7 +24,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.ico"
@@ -38,17 +40,18 @@
     }
   },
   "dependencies": {
-    "chokidar": "^4.0.1",
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "fast-glob": "^3.3.2",
-    "form-data": "^4.0.1",
     "adm-zip": "^0.5.16",
-    "electron-squirrel-startup": "^1.0.1"
+    "axios": "^1.7.7",
+    "chokidar": "^4.0.1",
+    "dotenv": "^16.4.5",
+    "electron-squirrel-startup": "^1.0.1",
+    "fast-glob": "^3.3.2",
+    "form-data": "^4.0.1"
   },
   "devDependencies": {
-    "@types/node": "^22.7.9",
     "@types/adm-zip": "^0.5.5",
+    "@types/chokidar": "^1.7.5",
+    "@types/node": "^22.7.9",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
     "tsx": "^4.19.1",
