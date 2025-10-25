@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
+import path from 'path';
 import { authRouter } from './routes/auth';
 import { savesRouter } from './routes/saves';
 import { syncRequestsRouter } from './routes/sync-requests';
+import { adminRouter } from './routes/admin';
 import { discordAuth } from './auth/discord-auth';
 
 dotenv.config();
@@ -18,14 +20,23 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/saves', savesRouter);
 app.use('/api/sync-requests', syncRequestsRouter);
+app.use('/api/admin', adminRouter);
 
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });
+});
+
+// Admin panel route
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
 // Start Discord bot
