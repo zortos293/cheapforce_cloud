@@ -117,7 +117,10 @@ export class DiscordAuth {
   private async handleLinkCommand(interaction: any) {
     const discordId = interaction.user.id;
     const discordUsername = interaction.user.username;
-    const discordAvatar = interaction.user.avatar; // Avatar hash from Discord
+    // Construct full Discord CDN URL from avatar hash
+    const discordAvatar = interaction.user.avatar
+      ? `https://cdn.discordapp.com/avatars/${discordId}/${interaction.user.avatar}.png`
+      : null;
 
     try {
       const code = await this.sendLinkingCode(discordId, discordUsername, discordAvatar);
