@@ -24,7 +24,7 @@ export class ApiClient {
   /**
    * Link client with Discord account using 6-digit code
    */
-  async link(code: string): Promise<{ userId: number; username: string }> {
+  async link(code: string): Promise<{ userId: number; username: string; avatar: string | null; plan: string }> {
     const response = await this.client.post('/api/auth/link', { code });
     this.sessionId = response.data.sessionId;
 

@@ -98,6 +98,6 @@ export function canUseFeature(user: User, feature: 'games' | 'apps' | 'custom'):
 /**
  * Get user plan features
  */
-export function getPlanFeatures(plan: UserPlan): string[] {
+export function getPlanFeatures(plan: UserPlan): readonly string[] {
   return PLAN_LIMITS[plan].features;
 }

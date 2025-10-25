@@ -38,7 +38,9 @@ authRouter.post('/link', async (req: Request, res: Response) => {
       sessionId,
       user: {
         id: user.id,
-        username: user.discord_username
+        username: user.discord_username,
+        avatar: user.discord_avatar || null,
+        plan: user.plan
       }
     });
   } catch (error) {
@@ -74,7 +76,9 @@ authRouter.get('/verify', async (req: Request, res: Response) => {
       valid: true,
       user: {
         id: user.id,
-        username: user.discord_username
+        username: user.discord_username,
+        avatar: user.discord_avatar || null,
+        plan: user.plan
       }
     });
   } catch (error) {

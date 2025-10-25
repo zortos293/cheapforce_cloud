@@ -20,6 +20,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     discord_id TEXT UNIQUE NOT NULL,
     discord_username TEXT NOT NULL,
+    discord_avatar TEXT,
     created_at INTEGER NOT NULL,
     last_sync INTEGER,
     plan TEXT DEFAULT 'free',
@@ -57,12 +58,23 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_sync_requests_user ON sync_requests(user_id, processed);
 `);
 
+// Migration: Add discord_avatar column if it doesn't exist
+try {
+  db.exec(`ALTER TABLE users ADD COLUMN discord_avatar TEXT`);
+} catch (error: any) {
+  // Column already exists, ignore error
+  if (!error.message.includes('duplicate column name')) {
+    console.error('Migration error:', error);
+  }
+}
+
 export type UserPlan = 'free' | 'plus' | 'premium';
 
 export interface User {
   id: number;
   discord_id: string;
   discord_username: string;
+  discord_avatar: string | null;
   created_at: number;
   last_sync: number | null;
   plan: UserPlan;

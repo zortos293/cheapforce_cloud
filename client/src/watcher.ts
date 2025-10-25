@@ -1,4 +1,4 @@
-import chokidar from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import path from 'path';
 import fs from 'fs';
 
@@ -10,7 +10,7 @@ export interface WatcherConfig {
 }
 
 export class FileWatcher {
-  private watchers: Map<string, chokidar.FSWatcher> = new Map();
+  private watchers: Map<string, FSWatcher> = new Map();
   private pendingChanges: Map<string, Set<string>> = new Map();
   private syncIntervals: Map<string, NodeJS.Timeout> = new Map();
   private extensions: Map<string, string[]> = new Map(); // Store extensions per game
@@ -231,7 +231,7 @@ export class FileWatcher {
     const allFiles: string[] = [];
 
     for (const [dir, files] of Object.entries(watchedPaths)) {
-      for (const file of files) {
+      for (const file of files as string[]) {
         const fullPath = path.join(dir, file);
         if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
           allFiles.push(fullPath);
