@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheapForce Cloud - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .avatar-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            animation: avatarPop 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes avatarPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: calc(50% - 65px);
+            background: #43b581;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 4px solid white;
+        }
+
+        .checkmark {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .username {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .plan-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .plan-badge.plus {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .plan-badge.premium {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+        }
+
+        .status-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: fadeIn 0.8s ease-out 0.7s both;
+        }
+
+        .countdown {
+            color: #999;
+            font-size: 13px;
+            animation: fadeIn 0.8s ease-out 0.8s both;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #2e7d32;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="avatar-container">
+            <img id="avatar" class="avatar" src="" alt="Discord Avatar" />
+            <div class="status-badge">
+                <div class="checkmark">✓</div>
+            </div>
+        </div>
+
+        <h1>Welcome, <span class="username" id="username"></span>!</h1>
+        <p class="subtitle">Your account is linked successfully</p>
+
+        <div class="info-box">
+            <div class="info-row">
+                <span class="info-label">Plan</span>
+                <span class="plan-badge" id="plan"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Auto-Sync</span>
+                <span class="info-value">✅ Enabled</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Sync Interval</span>
+                <span class="info-value">Every 5 minutes</span>
+            </div>
+        </div>
+
+        <div class="status-message">
+            <div class="spinner"></div>
+            <span>Starting background sync...</span>
+        </div>
+
+        <p class="countdown">This window will close in <span id="timer">3</span> seconds</p>
+    </div>
+
+    <script>
+        // Receive user data from main process
+        window.electron.onUserData((userData) => {
+            const { username, avatar, plan } = userData;
+
+            // Set username
+            document.getElementById('username').textContent = username;
+
+            // Set avatar
+            const avatarImg = document.getElementById('avatar');
+            if (avatar) {
+                avatarImg.src = avatar;
+            } else {
+                // Default avatar if none provided
+                avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&size=120&background=667eea&color=fff&bold=true`;
+            }
+
+            // Set plan badge
+            const planBadge = document.getElementById('plan');
+            const planText = plan === 'free' ? 'Free' : plan === 'plus' ? 'Plus' : 'Premium';
+            planBadge.textContent = planText;
+            planBadge.classList.add(plan);
+
+            // Start countdown
+            let seconds = 3;
+            const timerElement = document.getElementById('timer');
+
+            const countdown = setInterval(() => {
+                seconds--;
+                timerElement.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    window.electron.closeWindow();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

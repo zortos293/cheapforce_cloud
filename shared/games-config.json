@@ -1,0 +1,75 @@
+{
+  "$schema": "./game-schema.json",
+  "games": [
+    {
+      "id": "minecraft",
+      "name": "Minecraft",
+      "enabled": true,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/.minecraft/saves",
+          "extensions": [".dat", ".json", ".txt", ".dat_old"]
+        }
+      ]
+    },
+    {
+      "id": "terraria",
+      "name": "Terraria",
+      "enabled": true,
+      "watchPaths": [
+        {
+          "pattern": "%USERPROFILE%/Documents/My Games/Terraria/Players",
+          "extensions": [".plr", ".bak"]
+        },
+        {
+          "pattern": "%USERPROFILE%/Documents/My Games/Terraria/Worlds",
+          "extensions": [".wld", ".bak"]
+        }
+      ]
+    },
+    {
+      "id": "stardew-valley",
+      "name": "Stardew Valley",
+      "enabled": true,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/StardewValley/Saves/*",
+          "extensions": [".xml", ""]
+        }
+      ]
+    },
+    {
+      "id": "elden-ring",
+      "name": "Elden Ring",
+      "enabled": false,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/EldenRing/*/ER0000.sl2",
+          "extensions": [".sl2"]
+        }
+      ]
+    },
+    {
+      "id": "dark-souls-3",
+      "name": "Dark Souls III",
+      "enabled": false,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/DarkSoulsIII/*/DS30000.sl2",
+          "extensions": [".sl2"]
+        }
+      ]
+    },
+    {
+      "id": "skyrim",
+      "name": "Skyrim Special Edition",
+      "enabled": false,
+      "watchPaths": [
+        {
+          "pattern": "%USERPROFILE%/Documents/My Games/Skyrim Special Edition/Saves",
+          "extensions": [".ess", ".skse"]
+        }
+      ]
+    }
+  ]
+}

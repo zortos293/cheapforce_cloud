@@ -1,0 +1,49 @@
+{
+  "$schema": "./app-schema.json",
+  "apps": [
+    {
+      "id": "vscode",
+      "name": "Visual Studio Code",
+      "enabled": true,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/Code/User",
+          "extensions": [".json", ".code-snippets"]
+        }
+      ]
+    },
+    {
+      "id": "obsidian",
+      "name": "Obsidian",
+      "enabled": true,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/obsidian",
+          "extensions": [".json"]
+        }
+      ]
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "enabled": false,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/Notion",
+          "extensions": [".json", ".db"]
+        }
+      ]
+    },
+    {
+      "id": "discord",
+      "name": "Discord Settings",
+      "enabled": false,
+      "watchPaths": [
+        {
+          "pattern": "%APPDATA%/discord/Local Storage/leveldb",
+          "extensions": [".log", ".ldb"]
+        }
+      ]
+    }
+  ]
+}

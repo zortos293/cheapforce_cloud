@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheapForce Cloud - Link Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .loading.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">☁️</div>
+        <h1>CheapForce Cloud</h1>
+        <p class="subtitle">Link your account to get started</p>
+
+        <div class="instructions">
+            <h3>📋 How to link:</h3>
+            <ol>
+                <li>Open your Discord server</li>
+                <li>Type <code>/link</code> command</li>
+                <li>Copy the 6-digit code from the bot</li>
+                <li>Enter the code below</li>
+            </ol>
+        </div>
+
+        <div class="input-group">
+            <label for="code">Enter your 6-digit code</label>
+            <input
+                type="text"
+                id="code"
+                maxlength="6"
+                placeholder="000000"
+                autocomplete="off"
+                autofocus
+            />
+        </div>
+
+        <button id="submitBtn">Link Account</button>
+
+        <div class="error" id="error"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span>Linking your account...</span>
+        </div>
+    </div>
+
+    <script>
+        const codeInput = document.getElementById('code');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('error');
+        const loadingDiv = document.getElementById('loading');
+
+        // Only allow numbers
+        codeInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // Auto-submit when 6 digits entered
+        codeInput.addEventListener('input', () => {
+            if (codeInput.value.length === 6) {
+                submitCode();
+            }
+        });
+
+        // Submit on button click
+        submitBtn.addEventListener('click', submitCode);
+
+        // Submit on Enter key
+        codeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCode();
+            }
+        });
+
+        async function submitCode() {
+            const code = codeInput.value;
+
+            if (code.length !== 6) {
+                showError('Please enter a 6-digit code');
+                return;
+            }
+
+            // Hide error and show loading
+            errorDiv.classList.remove('show');
+            loadingDiv.classList.add('show');
+            submitBtn.disabled = true;
+            codeInput.disabled = true;
+
+            try {
+                // Send code to main process
+                await window.electron.linkAccount(code);
+                // Success - window will be closed by main process
+            } catch (error) {
+                showError(error.message || 'Invalid code. Please try again.');
+                loadingDiv.classList.remove('show');
+                submitBtn.disabled = false;
+                codeInput.disabled = false;
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>

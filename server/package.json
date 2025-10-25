@@ -1,0 +1,35 @@
+{
+  "name": "cheapforce-cloud-server",
+  "version": "1.0.0",
+  "description": "Cloud save storage server with Discord authentication",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "register-commands": "node register-commands.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.651.1",
+    "@aws-sdk/s3-request-presigner": "^3.651.1",
+    "discord.js": "^14.16.3",
+    "express": "^4.21.1",
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "multer": "^1.4.5-lts.1",
+    "archiver": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/compression": "^1.7.5",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/multer": "^1.4.12",
+    "@types/archiver": "^6.0.2",
+    "@types/node": "^22.7.9",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
